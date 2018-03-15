@@ -112,6 +112,21 @@ grouped = data.groupby('TIME_dh')
 ### variable for first hour
 time1 = '2017080400'
 
+### get values from DataFrameGroupBy (grouped) with object get_group()
 group1 = grouped.get_group(time1)
+
+### use mean() function to calculate mean for DIR, SPEED, GUST, TEMP, Celsius 
+
+### create list with attributes we want
+mean_cols = ['DIR', 'SPEED', 'GUST', 'TEMP', 'Celsius', 'TIME_h']
+
+### call variable group1 for values for that hour (0400)
+mean_values = group1[mean_cols].mean()
+
+### insert datetime valuye from time1 variable 
+mean_values['TIME_dh'] = time1
+
+### append to dataFrame with append()
+
 
 
