@@ -127,6 +127,47 @@ mean_values = group1[mean_cols].mean()
 mean_values['TIME_dh'] = time1
 
 ### append to dataFrame with append()
+aggr_data = aggr_data.append(mean_values, ignore_index=True)
 
+### iterate over all of the groups with key variable. 
+
+for key, group, in grouped:
+       # aggregate data
+       mean_values = group[mean_cols].mean()
+       
+       # add "the key" (date+time info)
+       mean_values['TIME_dh'] = key
+       
+       # append to data frame
+       aggr_data = aggr_data.append(mean_values, ignore_index=True)
+
+###################
+###find outliers###
+###################       
+
+### find s/d and mean of wind speed
+std_wind = aggr_data['SPEED'].std()
+avg_wind = aggr_data['SPEED'].mean()
+
+### create threshold for outlier
+upper_threshold = avg_wind + (std_wind*2)
+
+### create an outlier column with value TRUE if windspeed is outlier
+aggr_data['Outlier'] = None
+
+### iterate over rows
+for idx, row in aggr_data.iterrows():
+    # update OUTLIER with TRUE if wind speed > upper_threshold
+    if row['SPEED'] > upper_threshold :
+        aggr_data.loc[idx, 'Outlier'] = True
+    else:
+        aggr_data.loc[idx, 'Outlier'] = False
+        
+### select potential storms from TRUE outliers
+storm = aggr_data.ix[aggr_data['Outlier'] == True]
+
+###########################################
+#############end above dataset#############
+###########################################
 
 
