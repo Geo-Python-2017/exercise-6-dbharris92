@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Mar 15 19:48:53 2018
-A script to import CSV of precipitation and temperature values from NOAA
-Script prints several general values about the data
+GeoPython Exercise 6 Assignment
+
+Problem 1: Import CSV of precipitation and temperature values from NOAA. Script prints several general values about the data
+Problem 2: Calculate monthly average temps
+
 @author: harrisab2
 """
 import pandas as pd
@@ -22,3 +25,18 @@ print('The average temperature was', data['TAVG'].mean(), 'degrees F.')
 ### max temperature of summer of 69
 summer = data[(data['DATE'] >= 19690510) & (data['DATE'] <= 19690831)]
 print('The max temperature in the summer of 69 was', summer['TMAX'].max(), 'degrees.')
+
+#################
+### Problem 2 ###
+#################
+
+### create an empty dataframe
+monthyData = pd.DataFrame()
+
+### slice time to monthly values (first convert to str)
+data['DATE_str'] = data['DATE'].astype(str)
+data['DATE_mo'] = data['DATE_str'].str.slice(start=0, stop=6)
+
+
+
+
