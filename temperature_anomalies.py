@@ -15,16 +15,16 @@ data = pd.read_csv('ex6raw.txt', sep= '\s+', skiprows = [1],  dtype = {'PRCP': f
 
 ### print requested values
 
-print('There are', data['TAVG'].isnull().sum(), 'NaN average temperature values.')
-print('There are', data['TMIN'].isnull().sum(), 'NaN minimum temperature values values.')
-print('There are', data['DATE'].count(), 'total days covered by this file.')
-print('The first observation was', data['DATE'].iloc[0])
-print('The last observation was', data['DATE'].iloc[-1])
-print('The average temperature was', data['TAVG'].mean(), 'degrees F.')
+#print('There are', data['TAVG'].isnull().sum(), 'NaN average temperature values.')
+#print('There are', data['TMIN'].isnull().sum(), 'NaN minimum temperature values values.')
+#print('There are', data['DATE'].count(), 'total days covered by this file.')
+#print('The first observation was', data['DATE'].iloc[0])
+#print('The last observation was', data['DATE'].iloc[-1])
+#print('The average temperature was', data['TAVG'].mean(), 'degrees F.')
 
 ### max temperature of summer of 69
 summer = data[(data['DATE'] >= 19690510) & (data['DATE'] <= 19690831)]
-print('The max temperature in the summer of 69 was', summer['TMAX'].max(), 'degrees.')
+#print('The max temperature in the summer of 69 was', summer['TMAX'].max(), 'degrees.')
 
 #################
 ### Problem 2 ###
@@ -70,8 +70,59 @@ for idx, row in monthlyData.iterrows():
     ### add to new column
     monthlyData.loc[idx, colName] = celsius
 
+
+### make DATE_mo a column
+monthlyData['dateMo'] = monthlyData.index
+
+### reorder
+monthlyData = monthlyData[['dateMo', 'TempF', 'TempC']]
+monthlyData = monthlyData.reset_index(drop = True)
+
+
 ########################################
 ############# Problem 3 ################
 ########################################
 
- 
+### create a new DataFrame
+referenceTemps = pd.DataFrame()
+
+### sort data from 1952 to 1980
+period = data[(data['DATE'] >= 19520101) & (data['DATE'] <= 19801231)]
+
+
+### slice by month
+period['Month'] = period['DATE_mo'].str.slice(start=4, stop=6)
+
+### group data
+grouped2 = period.groupby('Month') 
+
+### obtain mean values
+period.groupby('Month')['TAVG'].mean()
+
+### add to new dataframe
+referenceTemps['avgTempsC'] = (period.groupby('Month')['TAVG'].mean() -32) / 1.8
+
+### create monthly row index values
+rowMonth = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+### add to dataFrame
+referenceTemps['Months'] = rowMonth
+
+### reorder dataFrame and drop index
+referenceTemps = referenceTemps[['Months', 'avgTempsC']]
+referenceTemps = referenceTemps.reset_index(drop = False)
+
+### prepare to join dataframes
+### create matching col in monthlyData to match referenceTemps
+monthlyData['Month'] = monthlyData['dateMo'].str.slice(start=4, stop=6)
+
+### join
+monthlyData = monthlyData.merge(referenceTemps, on='Month')       
+
+### calculate DIFF
+monthlyData['DIFF'] = (monthlyData['TempC'] - monthlyData['avgTempsC']) 
+
+### clean dataset    
+monthlyData = monthlyData.drop(['TempF', 'Month'], axis=1) 
+monthlyData = monthlyData.set_index('dateMo')
+monthlyData = monthlyData[['TempC', 'avgTempsC', 'Months', 'DIFF']]  
