@@ -31,12 +31,47 @@ print('The max temperature in the summer of 69 was', summer['TMAX'].max(), 'degr
 #################
 
 ### create an empty dataframe
-monthyData = pd.DataFrame()
+monthlyData = pd.DataFrame()
 
 ### slice time to monthly values (first convert to str)
 data['DATE_str'] = data['DATE'].astype(str)
 data['DATE_mo'] = data['DATE_str'].str.slice(start=0, stop=6)
 
+### group data by date
+grouped = data.groupby('DATE_mo')
 
+### obtain mean of each month
+data.groupby('DATE_mo')['TAVG'].mean()
 
+### add to new dataframe 
+monthlyData['TempF'] = data.groupby('DATE_mo')['TAVG'].mean() 
 
+### use function to convert F temps to C
+
+def fahrToCelsius(temp_fahrenheit):
+    """ function to convert F temps to C
+    Parameters
+    ----------
+    
+    temp_fahrenheit: int | float
+        Input temperature in F (number)
+    """
+    converted_temp = (temp_fahrenheit - 32) / 1.8
+    return converted_temp
+
+### create empty column for function 
+colName = 'TempC'
+monthlyData[colName]= None
+
+### iterate through F values and update with c
+for idx, row in monthlyData.iterrows():
+    ### convert F temp to C in each row
+    celsius = fahrToCelsius(row['TempF'])
+    ### add to new column
+    monthlyData.loc[idx, colName] = celsius
+
+########################################
+############# Problem 3 ################
+########################################
+
+ 
