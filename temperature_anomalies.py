@@ -125,4 +125,8 @@ monthlyData['DIFF'] = (monthlyData['TempC'] - monthlyData['avgTempsC'])
 ### clean dataset    
 monthlyData = monthlyData.drop(['TempF', 'Month'], axis=1) 
 monthlyData = monthlyData.set_index('dateMo')
-monthlyData = monthlyData[['TempC', 'avgTempsC', 'Months', 'DIFF']]  
+monthlyData = monthlyData[['TempC', 'avgTempsC', 'Months', 'DIFF']]
+
+### write to csv  
+monthlyData.to_csv('Helsinki_mo.csv', sep=',')
+referenceTemps.to_csv('Helsinki_moAgg.csv', sep=',')
