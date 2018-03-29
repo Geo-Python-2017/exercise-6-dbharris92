@@ -44,14 +44,14 @@ referenceTemps = referenceTemps.reset_index(drop = False)
 ### join
 data = data.merge(referenceTemps, on='Month')       
 
+### convert to C
+data['TEMPC'] = (data['TAVG'] -32) / 1.8
+
 ### calculate DIFF
-data['DIFF'] = (data['TAVG'] - referenceTemps['avgTempsC']) 
+data['DIFF'] = (data['TEMPC'] - data['avgTempsC']) 
 
-### clean dataset    
-#monthlyData = monthlyData.drop(['TempF', 'Month'], axis=1) 
-#monthlyData = monthlyData.set_index('dateMo')
-#monthlyData = monthlyData[['TempC', 'avgTempsC', 'Months', 'DIFF']]
-
+### set date as index
+data = data.set_index('DATE')
 
 
 
